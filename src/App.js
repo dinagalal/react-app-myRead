@@ -5,6 +5,7 @@ import ListBooks from "./ListBooks";
 import SearchComponent from "./SearchComponent";
 import * as BooksAPI from './BooksAPI';
 
+
 const BookShelves = [
   {key:"currentlyReading", name:"Currently reading"},
   {key:"wantToRead", name:"Want to Read"},
@@ -13,8 +14,9 @@ const BookShelves = [
 
 
 const App = () =>{
-  // const [showSearchPage, setShowSearchpage] = useState(false);
+  const [searchQuery, setSearchQuery] = useState([]);
   const [allBooks, setAllBooks] = useState([]);
+
   
 //Get all Data from API (show all books)
   useEffect(() => {
@@ -24,7 +26,7 @@ const App = () =>{
       
     
     };
-
+    
     getBooks();
    
   }, []);
@@ -32,28 +34,53 @@ const App = () =>{
 // update the book and where to  
 
 const updateTheShelf = (book,toShelf) =>{
-  const updatedBooks = allBooks.map((bok)=>{
-    if(bok.id === book.id){
-      bok.shelf = toShelf
-      return book
-    }
-   return bok
+  BooksAPI.update(book,toShelf);
+  let updatedBooks = [];
+  updatedBooks = allBooks.filter(b => b.id != book.id);
+
+  if(toShelf !="none"){
+    book.shelf = toShelf
+    updatedBooks = updatedBooks.concat(book)
   }
-  )
-  setAllBooks(updatedBooks);
-  BooksAPI.update(book,toShelf).then(data => console.log(data));
+
+   setAllBooks(updatedBooks);
+ 
+  
      
 }
 
 
-  
+
+const searchForBooks = (query=> {
+   if(query.length > 0){
+    BooksAPI.search(query).then(data=> {
+      if(data.error){
+        setSearchQuery([]);
+      }
+      else{
+        setSearchQuery(data)
+      }
+
+   })
+  }
+  else{
+    setSearchQuery([]);
+  }
+});
+const resetSearch = ()=>{
+  setSearchQuery([]);
+}
+
+
 
   return (
    
       <Routes>
              
             <Route exact path="/" element = {<ListBooks bookshelves={BookShelves} allBooks={allBooks} moveTo={updateTheShelf}/>} />
-            <Route exact path="/search" element={<SearchComponent/>}/>
+            <Route exact path="/search" element={<SearchComponent onSearch={searchForBooks} moveTo={updateTheShelf} allBooks={allBooks}
+            query={searchQuery} onResetSearch={resetSearch}
+            />}/>
        
       </Routes>
       

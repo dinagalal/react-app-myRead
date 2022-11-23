@@ -1,26 +1,23 @@
 import {Link} from "react-router-dom";
+import SearchInput from "./SearchInput";
+import SearchResults from "./SearchResults";
 
-const SearchComponent = ({}) =>{
+const SearchComponent = ({onSearch, allBooks, query, moveTo, onResetSearch})=>{
+  
     return(
         <div className="search-books">
         <div className="search-books-bar">
-          <Link to="/" className="close-search"
+          <Link to="/" >
+            <button onClick={onResetSearch} className="close-search" >Close</button>
             
-          >
-            Close
           </Link>
-          <div className="search-books-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search by title, author, or ISBN"
-            />
-          </div>
+          
+            <SearchInput onSearch={onSearch} />
+          
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid"></ol>
-        </div>
+        <SearchResults allBooks={allBooks} query={query} moveTo={moveTo}/>
+       
       </div>
     )
-
-}
+};
 export default SearchComponent

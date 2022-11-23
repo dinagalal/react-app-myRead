@@ -14,7 +14,7 @@ const bookshelf = ({shelf, allBooks, moveTo})=>{
                               <Book book={book} key={book.id} moveTo={moveTo} shelf={shelf}></Book>
                              
                           ))
-                      }dd
+                      }
 
                   </ol>
                   </div>
